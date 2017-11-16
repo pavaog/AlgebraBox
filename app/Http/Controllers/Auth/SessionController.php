@@ -75,6 +75,8 @@ class SessionController extends Controller
         // Terminate the user's current session.  Passing true as the
         // second parameter kills all of the user's active sessions.
         $result = $this->authManager->logout(null, null);
+        $request->session()->forget('root');
+        $request->session()->forget('curr_dir');
 
         // Return the appropriate response
         return $result->dispatch(route('index'));

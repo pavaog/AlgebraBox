@@ -13,9 +13,25 @@
 
 // Index page
 Route::get('/', ['as' => 'index', 'uses' => 'IndexController@index']);
-// Home page
-Route::get('home', ['as' => 'home', 'uses' => 'User\HomeController@index']);
 
+/*######### HOME #####################*/
+Route::group(['prefix' => 'home'], function () {
+  // Home page
+  Route::get('/', ['as' => 'home', 'uses' => 'User\HomeController@index']);
+  // Dir page
+  Route::get('/{sublevels?}', ['as' => 'home.dir', 'uses' => 'User\HomeController@directories'])->where('sublevels', '(.*)');
+});
+
+// Directory (create, delete)
+Route::post('create', ['as' => 'dir.create', 'uses' => 'User\HomeController@create']);
+Route::delete('/{dir?}', ['as' => 'dir.delete', 'uses' => 'User\HomeController@delete']);
+
+//Files (upload, delete, download)
+Route::post('/', ['as' => 'file.upload', 'uses' => 'User\FileController@store']);
+Route::delete('delete/{file}', ['as' => 'delete.file', 'uses' => 'User\FileController@delete']);
+Route::get('download/{file}', ['as' => 'down.file', 'uses' => 'User\FileController@download']);
+
+/*######### AUTH #####################*/
 // Authorization
 Route::get('login', ['as' => 'auth.login.form', 'uses' => 'Auth\SessionController@getLogin']);
 Route::post('login', ['as' => 'auth.login.attempt', 'uses' => 'Auth\SessionController@postLogin']);
@@ -35,8 +51,6 @@ Route::get('password/reset/{code}', ['as' => 'auth.password.reset.form', 'uses' 
 Route::post('password/reset/{code}', ['as' => 'auth.password.reset.attempt', 'uses' => 'Auth\PasswordController@postReset']);
 Route::get('password/reset', ['as' => 'auth.password.request.form', 'uses' => 'Auth\PasswordController@getRequest']);
 Route::post('password/reset', ['as' => 'auth.password.request.attempt', 'uses' => 'Auth\PasswordController@postRequest']);
-
-
 
 /*############# ADMIN ##############*/
 Route::group(['prefix' => 'admin'], function () {
